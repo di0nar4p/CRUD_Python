@@ -6,7 +6,7 @@ import os
 
 #retorna todos os valores de alunos ou professores
 def select_all(param:str)-> None:
-    query= (f'''SELECT * from {param}''')
+    query= (f'''SELECT * FROM {param}''')
     conn = db_connect()
     cursor = conn.cursor()
 
@@ -19,7 +19,7 @@ def select_all(param:str)-> None:
 
 #retorna o aluno ou professor por cpf
 def select_cpf(param:str, cpf:int)-> None:
-    query= (f'''SELECT * from {param} where cpf= {cpf}''')
+    query= (f'''SELECT * FROM {param} WHERE cpf= {cpf}''')
     conn = db_connect()
     cursor = conn.cursor()
 
@@ -81,8 +81,19 @@ def insert_aluno(obj:Aluno)-> None:
     else:
         pass
     
-
-
-
-
-
+def excluirRegistro(param:str,cpf:str)-> None:
+    query= f'DELETE FROM {param} WHERE cpf={cpf}'
+    conn = db_connect()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute(query)
+        conn.commit()
+        print('Registro deletado com sucesso!')
+        os.system('pause')or None
+        
+    except Exception as error:
+        raise error('Deu ruim')
+    else:
+        pass
+    

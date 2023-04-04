@@ -1,4 +1,4 @@
-from Controller.requisicoes import select_all,select_cpf,insert_prof,insert_aluno
+from Controller.requisicoes import select_all,select_cpf,insert_prof,insert_aluno,excluirRegistro
 from Models.aluno import Aluno
 from Models.professor import Professor
 import os
@@ -6,9 +6,11 @@ import os
 # Menu principal
 def menu():
     while True:
+        os.system('cls')or None
         op= int(input('''Selecione uma operação: 
                         1- Consultar. 
                         2- Inserir.
+                        3- Deletar.
                         0- Sair.
                          
                          '''))
@@ -93,7 +95,21 @@ def menu():
                     valHora=float(input('Valor hora: '))
                     prof=Professor(nome,idade,cpf,tel,sexo,formacao,valHora)
                     insert_prof(prof)
-            
+            case 3:
+                os.system('cls')or None
+                op= int(input('''                      
+                1- Deletar aluno.
+                2- Deletar professor.                
+                0- Sair.       
+                      '''))
+                if op == 1:
+                    cpf=input('Digite o CPF do aluno')
+                    excluirRegistro('alunos',cpf)
+                elif op == 2:
+                    cpf=input('Digite o CPF do professor')
+                    excluirRegistro('professores',cpf)
+                elif op == 0:
+                    break
             case 0:
                 break  
             
