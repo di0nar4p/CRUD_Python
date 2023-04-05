@@ -1,4 +1,4 @@
-from Controller.requisicoes import select_all,select_cpf,insert_prof,insert_aluno,excluirRegistro
+from Controller.requisicoes import select_all,select_cpf,insert_prof,insert_aluno,excluirRegistro,updateAluno,updateProfessor
 from Models.aluno import Aluno
 from Models.professor import Professor
 import os
@@ -11,6 +11,7 @@ def menu():
                         1- Consultar. 
                         2- Inserir.
                         3- Deletar.
+                        4- Atualizar.
                         0- Sair.
                          
                          '''))
@@ -110,6 +111,40 @@ def menu():
                     excluirRegistro('professores',cpf)
                 elif op == 0:
                     break
+            
+            case 4:
+                os.system('cls')or None
+                op= int(input('''                      
+                1- Atualizar aluno.
+                2- Atualizar professor.                
+                0- Sair.       
+                      '''))
+                if op == 1:
+                    os.system('cls')or None
+                    nome=str(input('Nome: '))
+                    idade=int(input('Idade: '))
+                    cpf=str(input('CPF: '))
+                    tel= str(input('Telefone: '))
+                    sexo=str(input('Sexo: '))
+                    matricula=str(input('Matricula: '))
+                    turma=str(input('Turma: '))
+                    aluno = Aluno(nome,idade,cpf,tel,sexo,matricula,turma)
+                    updateAluno(aluno,cpf)
+                elif op == 2:
+                    os.system('cls')or None
+                    nome= str(input('Nome: '))
+                    idade =int(input('Idade: '))
+                    cpf= str(input('CPF: '))
+                    tel= str(input('Telefone: '))
+                    sexo= str(input('Sexo: '))
+                    formacao= str(input('Formação: '))
+                    valorHora= str(input('Valor hora: '))
+                    professor = Professor(nome,idade,cpf,tel,sexo,formacao,valorHora)
+                    updateProfessor(professor,cpf)
+                elif op == 0:
+                    break
+                              
+            
             case 0:
                 break  
             

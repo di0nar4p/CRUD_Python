@@ -97,3 +97,52 @@ def excluirRegistro(param:str,cpf:str)-> None:
     else:
         pass
     
+def updateAluno(obj:Aluno,cpf:str)-> None:
+    query= f'''UPDATE alunos SET 
+            nome= "{obj.nome}",
+            idade= "{obj.idade}",
+            cpf= "{obj.cpf}",
+            telefone= "{obj.telefone}",
+            sexo= "{obj.sexo}",
+            matricula= "{obj.matricula}",
+            turma ="{obj.turma}"
+            WHERE cpf={cpf}'''
+    conn = db_connect()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute(query)
+        conn.commit()
+        print('Registro atualizado com sucesso!')
+        os.system('pause')or None
+        
+    except Exception as error:
+        raise error('Deu ruim')
+    else:
+        pass    
+
+
+def updateProfessor(obj:Professor,cpf:str)-> None:
+    query= f'''UPDATE professores SET 
+            nome= "{obj.nome}",
+            idade= "{obj.idade}",
+            cpf= "{obj.cpf}",
+            telefone= "{obj.telefone}",
+            sexo= "{obj.sexo}",
+            formacao= "{obj.formacao}",
+            valorHora= "{obj.valorHora}"
+            WHERE cpf={cpf}'''
+    conn = db_connect()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute(query)
+        conn.commit()
+        print('Registro atualizado com sucesso!')
+        os.system('pause')or None
+        
+    except Exception as error:
+        raise error('Deu ruim')
+    else:
+        pass    
+    
