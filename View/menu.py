@@ -45,7 +45,6 @@ def menu():
                         break
                     
                 if consulta==2:
-                    
                     os.system('clear')or None
                     busca= int(input('''
                     1- Consultar todos
