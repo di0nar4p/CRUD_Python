@@ -2,7 +2,6 @@ import mysql.connector
 import os
 from dotenv import load_dotenv
 
-# Carregar o .env
 load_dotenv()
 
 #conexão com o banco de dados
@@ -20,4 +19,3 @@ def db_connect():
         raise error
     else:
         return conn
-db_connect()
