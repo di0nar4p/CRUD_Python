@@ -1,20 +1,23 @@
 import mysql.connector
-from getpass import getpass
+import os
+from dotenv import load_dotenv
 
+# Carregar o .env
+load_dotenv()
 
 #conexão com o banco de dados
 def db_connect():
+    '''Tenta realizar conexão com o banco de dados'''
     try:
         conn= mysql.connector.connect(
-        host='localhost',
-        port='3306',
-        user='root',
-        passwd= getpass('Digite a senha do banco: '),
-        db='escola'
+        host=os.getenv("HOST"),
+        port=int(os.getenv("PORT")),
+        user='u610207868_di0nar4p',
+        password='159753Pl@y',
+        db=os.getenv("DATABASE")
         )
     except Exception as error:
-        raise error('Deu ruim')
+        raise error
     else:
         return conn
-
-
+db_connect()

@@ -3,23 +3,27 @@ from Models.professor import Professor
 from Models.aluno import Aluno
 import os
 
+#NO FUTURO RETORNARÁ UM JSON PARA QUEM ESTIVER FAZENDO A REQUISIÇÃO
+
 
 #retorna todos os valores de alunos ou professores
 def select_all(param:str)-> None:
-    query= (f'''SELECT * FROM {param}''')
+
+    '''RETORNA TODOS OS VALORES DE QUALQUER TABELA'''
+    query = f'''SELECT * FROM {param}'''
     conn = db_connect()
     cursor = conn.cursor()
 
     cursor.execute(query)
     registros = cursor.fetchall()
-
     for row in registros:
         print(row)
-    os.system('pause')or None    
+    input('')  
 
 #retorna o aluno ou professor por cpf
-def select_cpf(param:str, cpf:int)-> None:
-    query= (f'''SELECT * FROM {param} WHERE cpf= {cpf}''')
+def select_cpf(param:str, cpf:str)-> None:
+    '''RETORNA DADOS FILTRADOS POR CPF'''
+    query= f'''SELECT * FROM {param} WHERE cpf= {cpf}'''
     conn = db_connect()
     cursor = conn.cursor()
 
@@ -27,13 +31,13 @@ def select_cpf(param:str, cpf:int)-> None:
     registro = cursor.fetchall()
     for row in registro:
         print(row)
-    os.system('pause')or None    
+    input('')      
     
     
 #insere um professor no banco 
 def insert_prof(obj:Professor)-> None:
-    query= f'''INSERT INTO professores VALUES(
-            "0",
+    query= f'''INSERT INTO professores (nome, idade, cpf, telefone, sexo, formacao, valorHora)
+    VALUES(
             "{obj.nome}",
             "{obj.idade}",
             "{obj.cpf}",
@@ -48,7 +52,7 @@ def insert_prof(obj:Professor)-> None:
         cursor.execute(query)
         conn.commit()
         print('Registro inserido com sucesso!')
-        os.system('pause')or None
+        input('')  
         
     except Exception as error:
         raise error('Deu ruim')
@@ -58,8 +62,9 @@ def insert_prof(obj:Professor)-> None:
 
 #insere um aluno no banco    
 def insert_aluno(obj:Aluno)-> None:
-    query= f'''INSERT INTO alunos VALUES(
-            "0",
+    query= f'''INSERT INTO alunos(nome,idade,cpf,telefone,sexo,matricula,turma)
+    VALUES
+    (
             "{obj.nome}",
             "{obj.idade}",
             "{obj.cpf}",
@@ -81,7 +86,8 @@ def insert_aluno(obj:Aluno)-> None:
     else:
         pass
     
-def excluirRegistro(param:str,cpf:str)-> None:
+def excluir_registro(param:str,cpf:str)-> None:
+    '''EXCLUI UM REGISTRO DO BANCO FILTRADO PELO CPF'''
     query= f'DELETE FROM {param} WHERE cpf={cpf}'
     conn = db_connect()
     cursor = conn.cursor()
