@@ -1,154 +1,131 @@
 from Controller.conexao import db_connect
 from Models.professor import Professor
 from Models.aluno import Aluno
+from sqlalchemy import text
 import os
 
-#NO FUTURO RETORNARÁ UM JSON PARA QUEM ESTIVER FAZENDO A REQUISIÇÃO
-
-
-#retorna todos os valores de alunos ou professores
-def select_all(param:str)-> None:
-
-    '''RETORNA TODOS OS VALORES DE QUALQUER TABELA'''
-    query = f'''SELECT * FROM {param}'''
-    conn = db_connect()
-    cursor = conn.cursor()
-
-    cursor.execute(query)
-    registros = cursor.fetchall()
-    for row in registros:
-        print(row)
-    input('')  
-
-#retorna o aluno ou professor por cpf
-def select_cpf(param:str, cpf:str)-> None:
-    '''RETORNA DADOS FILTRADOS POR CPF'''
-    query= f'''SELECT * FROM {param} WHERE cpf= {cpf}'''
-    conn = db_connect()
-    cursor = conn.cursor()
-
-    cursor.execute(query)
-    registro = cursor.fetchall()
-    for row in registro:
-        print(row)
-    input('')      
-    
-    
-#insere um professor no banco 
-def insert_prof(obj:Professor)-> None:
-    query= f'''INSERT INTO professores (nome, idade, cpf, telefone, sexo, formacao, valorHora)
-    VALUES(
-            "{obj.nome}",
-            "{obj.idade}",
-            "{obj.cpf}",
-            "{obj.telefone}",
-            "{obj.sexo}",
-            "{obj.formacao}",
-            "{obj.valorHora}")'''
-    conn = db_connect()
-    cursor = conn.cursor()
-    
+def select_all(param: str) -> None:
+    query = text(f"SELECT * FROM {param}")
+    session = db_connect()
     try:
-        cursor.execute(query)
-        conn.commit()
+        registros = session.execute(query).fetchall()
+        if len(registros)<1:
+            print('Nenhum registro encontrado')
+            input('')
+        else:
+            for row in registros:
+                print(row)
+            input('')
+    finally:
+        session.close()
+
+def select_cpf(param: str, cpf: str) -> None:
+    query = text(f"SELECT * FROM {param} WHERE cpf = :cpf")
+    session = db_connect()
+    try:
+        registros = session.execute(query, {"cpf": cpf}).fetchall()
+        if len(registros)<1:
+            print('Nenhum registro encontrado')
+            input('')
+        else:
+            for row in registros:
+                print(row)
+            input('')
+    finally:
+        session.close()
+
+def insert_prof(obj: Professor) -> None:
+    query = text("""
+        INSERT INTO professores (nome, idade, cpf, telefone, sexo, formacao, valorHora)
+        VALUES (:nome, :idade, :cpf, :telefone, :sexo, :formacao, :valorHora)
+    """)
+    session = db_connect()
+    try:
+        session.execute(query, obj.__dict__)
+        session.commit()
         print('Registro inserido com sucesso!')
-        input('')  
-        
+        input('')
     except Exception as error:
-        raise error('Deu ruim')
-    else:
-        pass
+        session.rollback()
+        raise Exception('Deu ruim')
+    finally:
+        session.close()
 
-
-#insere um aluno no banco    
-def insert_aluno(obj:Aluno)-> None:
-    query= f'''INSERT INTO alunos(nome,idade,cpf,telefone,sexo,matricula,turma)
-    VALUES
-    (
-            "{obj.nome}",
-            "{obj.idade}",
-            "{obj.cpf}",
-            "{obj.telefone}",
-            "{obj.sexo}",
-            "{obj.matricula}",
-            "{obj.turma}")'''
-    conn = db_connect()
-    cursor = conn.cursor()
-    
+def insert_aluno(obj: Aluno) -> None:
+    query = text("""
+        INSERT INTO alunos (nome, idade, cpf, telefone, sexo, matricula, turma)
+        VALUES (:nome, :idade, :cpf, :telefone, :sexo, :matricula, :turma)
+    """)
+    session = db_connect()
     try:
-        cursor.execute(query)
-        conn.commit()
+        session.execute(query, obj.__dict__)
+        session.commit()
         print('Registro inserido com sucesso!')
-        os.system('pause')or None
-        
+        os.system('pause') or None
     except Exception as error:
-        raise error('Deu ruim')
-    else:
-        pass
-    
-def excluir_registro(param:str,cpf:str)-> None:
-    '''EXCLUI UM REGISTRO DO BANCO FILTRADO PELO CPF'''
-    query= f'DELETE FROM {param} WHERE cpf={cpf}'
-    conn = db_connect()
-    cursor = conn.cursor()
-    
+        session.rollback()
+        raise Exception('Deu ruim')
+    finally:
+        session.close()
+
+def excluir_registro(param: str, cpf: str) -> None:
+    query = text("DELETE FROM " + param + " WHERE cpf = :cpf")
+    session = db_connect()
     try:
-        cursor.execute(query)
-        conn.commit()
+        session.execute(query, {"cpf": cpf})
+        session.commit()
         print('Registro deletado com sucesso!')
-        os.system('pause')or None
-        
+        os.system('pause') or None
     except Exception as error:
-        raise error('Deu ruim')
-    else:
-        pass
-    
-def updateAluno(obj:Aluno,cpf:str)-> None:
-    query= f'''UPDATE alunos SET 
-            nome= "{obj.nome}",
-            idade= "{obj.idade}",
-            cpf= "{obj.cpf}",
-            telefone= "{obj.telefone}",
-            sexo= "{obj.sexo}",
-            matricula= "{obj.matricula}",
-            turma ="{obj.turma}"
-            WHERE cpf={cpf}'''
-    conn = db_connect()
-    cursor = conn.cursor()
-    
-    try:
-        cursor.execute(query)
-        conn.commit()
-        print('Registro atualizado com sucesso!')
-        os.system('pause')or None
-        
-    except Exception as error:
-        raise error('Deu ruim')
-    else:
-        pass    
+        session.rollback()
+        raise Exception('Deu ruim')
+    finally:
+        session.close()
 
-
-def updateProfessor(obj:Professor,cpf:str)-> None:
-    query= f'''UPDATE professores SET 
-            nome= "{obj.nome}",
-            idade= "{obj.idade}",
-            cpf= "{obj.cpf}",
-            telefone= "{obj.telefone}",
-            sexo= "{obj.sexo}",
-            formacao= "{obj.formacao}",
-            valorHora= "{obj.valorHora}"
-            WHERE cpf={cpf}'''
-    conn = db_connect()
-    cursor = conn.cursor()
-    
+def updateAluno(obj: Aluno, cpf: str) -> None:
+    query = text("""
+        UPDATE alunos SET 
+            nome = :nome,
+            idade = :idade,
+            cpf = :cpf,
+            telefone = :telefone,
+            sexo = :sexo,
+            matricula = :matricula,
+            turma = :turma
+        WHERE cpf = :cpf_filter
+    """)
+    session = db_connect()
     try:
-        cursor.execute(query)
-        conn.commit()
+        session.execute(query, {**obj.__dict__, "cpf_filter": cpf})
+        session.commit()
         print('Registro atualizado com sucesso!')
-        os.system('pause')or None
-        
+        os.system('pause') or None
     except Exception as error:
-        raise error('Deu ruim')
-    else:
-        pass    
-    
+        session.rollback()
+        raise Exception('Deu ruim')
+    finally:
+        session.close()
+
+def updateProfessor(obj: Professor, cpf: str) -> None:
+    query = text("""
+        UPDATE professores SET 
+            nome = :nome,
+            idade = :idade,
+            cpf = :cpf,
+            telefone = :telefone,
+            sexo = :sexo,
+            formacao = :formacao,
+            valorHora = :valorHora
+        WHERE cpf = :cpf_filter
+    """)
+    session = db_connect()
+    try:
+        session.execute(query, {**obj.__dict__, "cpf_filter": cpf})
+        session.commit()
+        print('Registro atualizado com sucesso!')
+        os.system('pause') or None
+    except Exception as error:
+        session.rollback()
+        raise Exception('Deu ruim')
+    finally:
+        session.close()

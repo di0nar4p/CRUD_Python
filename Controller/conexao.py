@@ -1,21 +1,20 @@
 import mysql.connector
 import os
 from dotenv import load_dotenv
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
+
 
 load_dotenv()
 
 #conexão com o banco de dados
 def db_connect():
-    '''Tenta realizar conexão com o banco de dados'''
-    try:
-        conn= mysql.connector.connect(
-        host=os.getenv("HOST"),
-        port=int(os.getenv("PORT")),
-        user='u610207868_di0nar4p',
-        password='159753Pl@y',
-        db=os.getenv("DATABASE")
-        )
-    except Exception as error:
-        raise error
-    else:
-        return conn
+    '''Conexão com SQLAlchemy'''
+    pwd = '159753Play'
+    host = 'srv1659.hstgr.io'
+    engine = create_engine(f"mysql+pymysql://u610207868_di0nar4p:{pwd}@{host}:3306/u610207868_glauco")
+
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    return session
+    
